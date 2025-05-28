@@ -16,6 +16,7 @@
 			buildInputs = [
 				pkgs.go
 				pkgs.yarn
+				pkgs.tailwindcss_4
 			];
 
 			shellHook = ''
