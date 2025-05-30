@@ -5,7 +5,7 @@ esbuild
 		entryPoints: ["./frontend/application.tsx"],
 		outdir: "./static/",
 		bundle: true,
-		minify: true
+		minify: false
 	})
 	.then(() => console.log("build complete!"))
 	.catch(() => process.exit(1));
