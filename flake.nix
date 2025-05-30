@@ -17,9 +17,12 @@
 				pkgs.go
 				pkgs.yarn
 				pkgs.tailwindcss_4
+				pkgs.sqlite
+				pkgs.nodejs_24
 			];
 
 			shellHook = ''
+				alias run="yarn run build && go run ."
 				echo "Hello World"
 			'';
 		};
