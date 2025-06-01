@@ -3,15 +3,24 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"dependencies": {
+		"@tabler/icons-react": "^3.33.0",
 		"@tailwindcss/cli": "^4.1.8",
 		"@types/react": "^19.1.5",
 		"@types/react-dom": "^19.1.5",
+		"@types/react-syntax-highlighter": "^15.5.13",
+		"clsx": "^2.1.1",
 		"esbuild": "^0.25.5",
+		"motion": "^12.15.0",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
+		"react-syntax-highlighter": "^15.6.1",
+		"tailwind-merge": "^3.3.0",
 		"tailwindcss": "^4.1.8"
 	},
 	"scripts": {
 		"build": "node esbuild.js && tailwindcss -i ./frontend/style.css -o ./static/style.css"
+	},
+	"overrides": {
+		"react-syntax-highlighter": "15.0.0"
 	}
 }
