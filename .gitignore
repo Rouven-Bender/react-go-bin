@@ -1,6 +1,4 @@
 note.md
-static/*.js
-static/style.css
+cdn/*
 node_modules/*
 *.sqlite
-static/wallpaper.png

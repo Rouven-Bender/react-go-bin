@@ -3,7 +3,7 @@ const esbuild = require("esbuild");
 esbuild
 	.build({
 		entryPoints: ["./frontend/application.tsx"],
-		outdir: "./static/",
+		outdir: "./cdn/",
 		bundle: true,
 		minify: false
 	})

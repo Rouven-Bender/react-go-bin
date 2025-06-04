@@ -4,12 +4,23 @@ import { CodeBlock } from "./code-block.tsx"
 
 export default function Contentpage() {
 	const [data, setData] = useState(null)
+	const [content, setContent] = useState(null)
 	const uuid = document.location.pathname.split("/")[1];
 	const url = "/api/" + uuid
 	useEffect(() => {
 		fetch(url)
 		.then(response => { return response.json() })
-		.then(json => setData(json))
+		.then(json => {
+			if (json.type == 1) {
+				fetch(json.data)
+				.then(response => {
+					return response.text()
+				})
+				.then(plain => setContent(plain))
+				.catch(error => console.error("Error fetching data:", error))
+			}
+			setData(json)
+		})
 		.catch(error => console.error("Error fetching data:", error))
 	}, []);
 	switch (data?.type) {
@@ -27,16 +38,11 @@ export default function Contentpage() {
 					language="txt"
 					filename="plain-text"
 					tabs={[
-							{name: "plain text", code: data.data, language:"txt"}
+							{name: "plain text", code: content, language:"txt"}
 					]}
-				/>
+				></CodeBlock>
 			</div>
 			)
-			//return (
-			//	<div>
-			//		{data ? <p>{data.data}</p> : ''}
-			//	</div>
-			//)
 		}
 		case 2: { //console.log("image")
 			return (
