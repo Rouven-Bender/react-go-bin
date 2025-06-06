@@ -6,13 +6,12 @@ export default function Contentpage() {
 	const [data, setData] = useState(null)
 	const [content, setContent] = useState(null)
 	const uuid = document.location.pathname.split("/")[1];
-	const url = "/api/" + uuid
 	useEffect(() => {
-		fetch(url)
+		fetch("/api/"+uuid)
 		.then(response => { return response.json() })
 		.then(json => {
 			if (json.type == 1) {
-				fetch(json.data)
+				fetch("/userdata/"+json.id+".txt")
 				.then(response => {
 					return response.text()
 				})
@@ -47,7 +46,7 @@ export default function Contentpage() {
 		case 2: { //console.log("image")
 			return (
 			<div>
-					{data ? <img src={data.data}></img> : ''}
+					{data ? <img src={"/userdata/"+data.id+"."+data.data}></img> : ''}
 			</div>
 			)
 		}
