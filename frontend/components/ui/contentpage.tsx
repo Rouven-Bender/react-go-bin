@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router';
 
 import { CodeBlock } from "./code-block.tsx"
 
 export default function Contentpage() {
+	let navigate = useNavigate()
 	const [data, setData] = useState(null)
 	const [content, setContent] = useState(null)
 	const uuid = document.location.pathname.split("/")[1];
@@ -24,11 +26,8 @@ export default function Contentpage() {
 	}, []);
 	switch (data?.type) {
 		case 0: { //console.log("link")
-			return (
-				<div>
-					{data ? <a href={data.data}>{data.data}</a> : ''}
-				</div>
-			)
+			window.location = data?.data
+			break
 		}
 		case 1: { //console.log("plain text")
 			return (
