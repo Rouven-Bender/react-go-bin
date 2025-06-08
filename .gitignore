@@ -3,3 +3,5 @@ cdn/*
 node_modules/*
 *.sqlite
 leftof
+JWT_SECRET
+SALT

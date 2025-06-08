@@ -45,6 +45,22 @@ func (s *sqliteStore) LookupContent(id string) (*content, error) {
 	return nil, fmt.Errorf("content %s not found", id)
 }
 
+func (s *sqliteStore) CheckForSecretKey(key string) bool {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return false
+	}
+	defer tx.Rollback()
+
+	query := `select * from creds where key_hash = ?`
+	row := tx.QueryRow(query, key)
+	dbkey := ""
+	if err := row.Scan(&dbkey); err != nil {
+		return false
+	}
+	return dbkey == key
+}
+
 func scanIntoContent(rows *sql.Rows) (*content, error) {
 	c := new(content)
 	err := rows.Scan(

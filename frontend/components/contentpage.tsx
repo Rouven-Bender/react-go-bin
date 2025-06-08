@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router';
 
 import { CodeBlock } from "./code-block.tsx"
 
 export default function Contentpage() {
-	let navigate = useNavigate()
 	const [data, setData] = useState(null)
 	const [content, setContent] = useState(null)
 	const uuid = document.location.pathname.split("/")[1];
 	useEffect(() => {
-		fetch("/api/"+uuid)
+		fetch("/api/lookup/"+uuid)
 		.then(response => { return response.json() })
 		.then(json => {
 			if (json.type == 1) {

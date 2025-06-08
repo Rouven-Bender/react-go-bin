@@ -18,7 +18,7 @@
 		"tailwindcss": "^4.1.8"
 	},
 	"scripts": {
-		"build": "node esbuild.js && tailwindcss -i ./frontend/style.css -o ./static/style.css"
+		"build": "node esbuild.js && tailwindcss -i ./frontend/style.css -o ./cdn/style.css"
 	},
 	"overrides": {
 		"react-syntax-highlighter": "15.0.0"
