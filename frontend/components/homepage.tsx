@@ -1,13 +1,17 @@
 import React from "react";
+import getCookie from "../helper/cookies.ts"
 
 export default function Homepage() {
+	if (getCookie("authToken") != "") {
+		text = "This is my pastebin clone and you seem to have a token"
+	} else {
+		text = "This is my pastebin clone"
+	}
 	return (
-	<body>
-		<div class="flex flex-col justify-center items-center h-screen">
-			<h1 class="text-3x1 font-bold underline">
-				This is my pastebin clone
-			</h1>
-		</div>
-	</body>
+	<div className="flex flex-col justify-center items-center h-screen">
+		<h1 className="text-3x1 font-bold underline">
+			{text}
+		</h1>
+	</div>
 	)
 }

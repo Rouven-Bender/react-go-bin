@@ -91,7 +91,7 @@ func verifyCred(w http.ResponseWriter, r *http.Request) {
 }
 func createJWTToken() (string, error) {
 	claims := &jwt.RegisteredClaims{
-		ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(time.Hour * 1)},
+		ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(time.Hour * 2)},
 		Issuer:    issuerName,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

@@ -16,6 +16,14 @@ export default function Login() {
 		.then(response => {return response.json()})
 		.then(json => {
 			document.cookie = "authToken="+json.token+";max-age=" + lifetime
+			if (document.location.search != "") {
+				let paras = document.location.search.split("=")
+				if (paras[0] = "?from"){
+					document.location = "/"+paras[1]
+					return
+				}
+			}
+			document.location = "/"
 		})
 	}
 

@@ -42,8 +42,15 @@ export default function Contentpage() {
 		}
 		case 2: { //console.log("image")
 			return (
-			<div>
-					{data ? <img src={"/userdata/"+data.id+"."+data.data}></img> : ''}
+			<div className="flex flex-col pb-3">
+				<div className="pt-3">
+					<div className="max-w-9/10 max-h-1/3 mx-auto object-contain border-solid border-2">
+						{data ? <img className="p-1" src={"/userdata/"+data.id}></img> : ''}
+					</div>
+				</div>
+				<div className="flex max-w-9/10 items-right mx-auto pt-4">
+					{data ? <a href={"/userdata/"+data.id} download={data.data}>Download File</a> : ''}
+				</div>
 			</div>
 			)
 		}

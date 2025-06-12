@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
 	"encoding/json"
 	"log"
@@ -29,11 +30,11 @@ func main() {
 	mux.HandleFunc("GET /", loadReact)
 	mux.HandleFunc("GET /{uuid}", loadReact)
 	mux.HandleFunc("GET /login", loadReact)
+	mux.HandleFunc("GET /upload", loadReact)
 
 	mux.HandleFunc("GET /api/lookup/{uuid}", lookupContent)
 	mux.HandleFunc("POST /api/login", verifyCred)
-	//mux.HandleFunc("POST /api/upload")
-	//mux.HandleFunc("PUT /api/{uuid}") //upload return'd welche uuid du uploaden kannst
+	mux.HandleFunc("POST /api/upload", requiresAuthToken(uploadHandler))
 
 	err = http.ListenAndServe(":8888", mux)
 	if err != nil {
@@ -70,5 +71,6 @@ func generateUUID() string {
 	if err != nil {
 		log.Fatal(err)
 	}
+	b = bytes.Trim(b, "\n")
 	return string(b)
 }
