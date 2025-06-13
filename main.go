@@ -36,6 +36,7 @@ func main() {
 	mux.HandleFunc("POST /api/login", verifyCred)
 	mux.HandleFunc("POST /api/upload", requiresAuthToken(uploadHandler))
 
+	log.Println("Server launching on port 8888")
 	err = http.ListenAndServe(":8888", mux)
 	if err != nil {
 		log.Fatal(err)

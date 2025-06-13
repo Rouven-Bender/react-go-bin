@@ -24,6 +24,31 @@ func NewSqliteStore() (*sqliteStore, error) {
 	}, nil
 }
 
+func (s *sqliteStore) CreateNewContent(c *content) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	err = func(c *content) error {
+		query := `insert into content values (?, ?, ?)`
+		stmt, err := tx.Prepare(query)
+		if err != nil {
+			return err
+		}
+		_, err = stmt.Exec(c.Id, c.Ctype, c.Data)
+		if err != nil {
+			return err
+		}
+		return nil
+	}(c)
+	if err == nil {
+		return tx.Commit()
+	} else {
+		_ = tx.Rollback()
+		return fmt.Errorf("insert logic failed: %w", err)
+	}
+}
+
 func (s *sqliteStore) LookupContent(id string) (*content, error) {
 	tx, err := s.db.Begin()
 	if err != nil {
@@ -84,4 +109,5 @@ type contenttype uint8
 const (
 	Link contenttype = iota
 	Plaintext
+	Image
 )
