@@ -13,7 +13,11 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 10*1024*1024)
 	tzpe := r.Header.Get("content-type")
 	filename := r.Header.Get("x-filename")
-	if tzpe == "" || filename == "" {
+	if tzpe == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if tzpe != "url" && filename == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -36,11 +40,15 @@ func writeLinkToDB(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	uuid := generateUUID()
 	database.CreateNewContent(&content{
-		Id:    generateUUID(),
+		Id:    uuid,
 		Data:  string(b),
 		Ctype: Link,
 	})
+	w.WriteHeader(http.StatusOK)
+	b, err = json.Marshal(uploadresponse{Uuid: uuid})
+	_, _ = w.Write(b)
 }
 
 func fileupload(w http.ResponseWriter, r *http.Request) {
