@@ -94,7 +94,6 @@ func verifyCred(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func createJWTToken(userid int) (string, error) {
-	log.Println(userid)
 	claims := &jwt.RegisteredClaims{
 		ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(time.Hour * 2)},
 		Issuer:    issuerName,
@@ -129,6 +128,22 @@ func requiresAuthToken(f http.HandlerFunc) http.HandlerFunc {
 		}
 		f(w, r)
 	}
+}
+
+func getUserIDFromJWT(tokenstring string) (int, error) {
+	token, err := validateJWT(tokenstring)
+	if err != nil {
+		return -1, err
+	}
+	s, err := token.Claims.GetSubject()
+	if err != nil {
+		return -1, err
+	}
+	id, err := strconv.Atoi(s)
+	if err != nil {
+		return -1, err
+	}
+	return id, nil
 }
 
 func validateJWT(tokenstring string) (*jwt.Token, error) {

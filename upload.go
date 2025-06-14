@@ -29,6 +29,15 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getToken(r *http.Request) string {
+	cookie, err := r.Cookie("authToken")
+	if err != nil {
+		log.Println("getToken:", err)
+		return ""
+	}
+	return cookie.Value
+}
+
 type uploadresponse struct {
 	Uuid string `json:"uuid"`
 }
@@ -40,11 +49,18 @@ func writeLinkToDB(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	userid, err := getUserIDFromJWT(getToken(r))
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	uuid := generateUUID()
 	database.CreateNewContent(&content{
-		Id:    uuid,
-		Data:  string(b),
-		Ctype: Link,
+		Id:     uuid,
+		Data:   string(b),
+		Ctype:  Link,
+		UserId: userid,
 	})
 	w.WriteHeader(http.StatusOK)
 	b, err = json.Marshal(uploadresponse{Uuid: uuid})
@@ -58,7 +74,14 @@ func fileupload(w http.ResponseWriter, r *http.Request) {
 	f, _ := os.Create("./cdn/userdata/" + uuid)
 	defer f.Close()
 
-	_, err := io.Copy(f, r.Body)
+	userid, err := getUserIDFromJWT(getToken(r))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		os.Remove(f.Name())
+		return
+	}
+
+	_, err = io.Copy(f, r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		os.Remove(f.Name())
@@ -75,9 +98,10 @@ func fileupload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = database.CreateNewContent(&content{
-		Id:    uuid,
-		Ctype: ctzpe,
-		Data:  filename,
+		Id:     uuid,
+		Ctype:  ctzpe,
+		Data:   filename,
+		UserId: userid,
 	})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

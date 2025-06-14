@@ -1,7 +1,8 @@
 create table content (
 	id char(37),
 	ctype int,
-	data varchar(2048)
+	data varchar(2048),
+	userid integer
 );
 create table creds (
 	userid integer primary key,

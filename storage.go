@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -31,12 +30,12 @@ func (s *sqliteStore) CreateNewContent(c *content) error {
 		return err
 	}
 	err = func(c *content) error {
-		query := `insert into content values (?, ?, ?)`
+		query := `insert into content values (?, ?, ?, ?)`
 		stmt, err := tx.Prepare(query)
 		if err != nil {
 			return err
 		}
-		_, err = stmt.Exec(c.Id, c.Ctype, c.Data)
+		_, err = stmt.Exec(c.Id, c.Ctype, c.Data, c.UserId)
 		if err != nil {
 			return err
 		}
@@ -94,6 +93,7 @@ func scanIntoContent(rows *sql.Rows) (*content, error) {
 		&c.Id,
 		&c.Ctype,
 		&c.Data,
+		&c.UserId,
 	)
 	if err != nil {
 		return nil, err
@@ -102,9 +102,10 @@ func scanIntoContent(rows *sql.Rows) (*content, error) {
 }
 
 type content struct {
-	Id    string      `json:"id"`
-	Ctype contenttype `json:"type"`
-	Data  string      `json:"data"`
+	Id     string      `json:"id"`
+	Ctype  contenttype `json:"type"`
+	Data   string      `json:"data"`
+	UserId int         `json:"-"`
 }
 type contenttype uint8
 
