@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -70,20 +71,21 @@ func (s *sqliteStore) LookupContent(id string) (*content, error) {
 	return nil, fmt.Errorf("content %s not found", id)
 }
 
-func (s *sqliteStore) CheckForSecretKey(key string) bool {
+func (s *sqliteStore) UserIdForSecretKey(key string) (int, bool) {
 	tx, err := s.db.Begin()
 	if err != nil {
-		return false
+		return -1, false
 	}
 	defer tx.Rollback()
 
 	query := `select * from creds where key_hash = ?`
 	row := tx.QueryRow(query, key)
+	userid := -1
 	dbkey := ""
-	if err := row.Scan(&dbkey); err != nil {
-		return false
+	if err := row.Scan(&userid, &dbkey); err != nil {
+		return -1, false
 	}
-	return dbkey == key
+	return userid, dbkey == key
 }
 
 func scanIntoContent(rows *sql.Rows) (*content, error) {

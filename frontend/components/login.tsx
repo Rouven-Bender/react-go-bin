@@ -1,7 +1,10 @@
 import React from "react";
+import { useState } from 'react';
 
 export default function Login() {
-	const lifetime = 2 * 60 * 60
+	const [serviceMsg, setMessage] = useState("");
+	const lifetime = 2 * 60 * 60 // how long a jwt token lives
+
 	function submit(formData) {
 		let key = formData.get("key")
 		fetch("/api/login", {
@@ -13,8 +16,16 @@ export default function Login() {
 				"Content-type": "application/json"
 			}
 		})
-		.then(response => {return response.json()})
+		.then(response => {
+				if (response.status == 200) {
+					return response.json()
+				}
+			})
 		.then(json => {
+			if (json.msg != undefined){
+				setMessage(json.msg)
+				return
+			}
 			document.cookie = "authToken="+json.token+";max-age=" + lifetime
 			if (document.location.search != "") {
 				let paras = document.location.search.split("=")
@@ -28,14 +39,15 @@ export default function Login() {
 	}
 
 	return (
-		<div className="flex justify-center items-center h-screen">
-		<div className="border-dotted border-2 rounded-full">
+		<div className="flex flex-col justify-center items-center h-screen">
+		<div className="flex flex-row border-dotted border-2 rounded-full">
 			<form action={submit}>
 				<label className="pl-5">Secret Key:</label>
 				<input className="pl-5" type="password" maxLength="30" name="key"/>
 				<button className="pl-5 pr-5" type="submit">Log in</button>
 			</form>
 		</div>
+			<p>{serviceMsg}</p>
 		</div>
 	)
 }

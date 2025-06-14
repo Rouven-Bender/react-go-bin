@@ -11,6 +11,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -62,14 +63,17 @@ func verifyCred(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hash := argon2.IDKey([]byte(req.Key), salt, 1, 64*1024, 4, 32)
-	if database.CheckForSecretKey(base64.StdEncoding.EncodeToString(hash)) {
-		token, err := createJWTToken()
+	if userid, ok := database.UserIdForSecretKey(base64.StdEncoding.EncodeToString(hash)); ok {
+		if userid == -1 {
+			log.Fatalf("negativ 1 gotten for %s as hash %s", req.Key, base64.StdEncoding.EncodeToString(hash))
+		}
+		token, err := createJWTToken(userid)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Println("ERROR: ", err)
 			return
 		}
-		b, err := json.Marshal(loginresponse{Token: token, Message: "login successful"})
+		b, err := json.Marshal(loginresponse{Token: token})
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Println("ERROR: ", err)
@@ -89,10 +93,12 @@ func verifyCred(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-func createJWTToken() (string, error) {
+func createJWTToken(userid int) (string, error) {
+	log.Println(userid)
 	claims := &jwt.RegisteredClaims{
 		ExpiresAt: &jwt.NumericDate{Time: time.Now().Add(time.Hour * 2)},
 		Issuer:    issuerName,
+		Subject:   strconv.Itoa(userid),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(JWT_SECRET)
