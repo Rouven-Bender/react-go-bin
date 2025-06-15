@@ -4,6 +4,7 @@ import (
 	"bytes"
 	_ "embed"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -15,11 +16,40 @@ var indexhtml []byte
 var database *sqliteStore
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("expected subcommand")
+		fmt.Printf("list of subcommands:\n\t- serve\n")
+		os.Exit(1)
+	}
+	switch os.Args[1] {
+	case "serve":
+		initDatabase()
+		launchServer()
+	case "add-user":
+		initDatabase()
+		addUser()
+	}
+}
+
+func addUser() {
+	newUserSecret := makeSecretKey()
+	hash := hashSecretKey(newUserSecret)
+	err := database.AddUser(hash)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Secret Key for new User: %s", newUserSecret)
+}
+
+func initDatabase() {
 	var err error
 	database, err = NewSqliteStore()
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func launchServer() {
 	mux := http.NewServeMux()
 	static := http.FileServer(http.Dir("./cdn"))
 	userdata := http.FileServer(http.Dir("./cdn/userdata/"))
@@ -37,7 +67,7 @@ func main() {
 	mux.HandleFunc("POST /api/upload", requiresAuthToken(uploadHandler))
 
 	log.Println("Server launching on port 8888")
-	err = http.ListenAndServe(":8888", mux)
+	err := http.ListenAndServe(":8888", mux)
 	if err != nil {
 		log.Fatal(err)
 	}

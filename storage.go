@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -22,6 +23,32 @@ func NewSqliteStore() (*sqliteStore, error) {
 	return &sqliteStore{
 		db: db,
 	}, nil
+}
+
+func (s *sqliteStore) AddUser(hash string) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	err = func(hash string) error {
+		query := `insert into creds(key_hash) values(?)`
+		stmt, err := tx.Prepare(query)
+		if err != nil {
+			return err
+		}
+		_, err = stmt.Exec(hash)
+		if err != nil {
+			return err
+		}
+		return nil
+	}(hash)
+	if err != nil {
+		log.Println("Error adding user to database:", err)
+		if err = tx.Rollback(); err != nil {
+			log.Println("error rolling back transaction", err)
+		}
+	}
+	return tx.Commit()
 }
 
 func (s *sqliteStore) CreateNewContent(c *content) error {

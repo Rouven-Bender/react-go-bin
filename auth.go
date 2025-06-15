@@ -36,9 +36,12 @@ type loginresponse struct {
 }
 
 func makeSecretKey() string {
-	t := rand.Text()
-	log.Println(t)
-	return t
+	return rand.Text()
+}
+
+// hash the secret key and return base64 string
+func hashSecretKey(key string) string {
+	return base64.StdEncoding.EncodeToString(argon2.IDKey([]byte(key), salt, 1, 64*1024, 4, 32))
 }
 
 func verifyCred(w http.ResponseWriter, r *http.Request) {
@@ -62,10 +65,10 @@ func verifyCred(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hash := argon2.IDKey([]byte(req.Key), salt, 1, 64*1024, 4, 32)
-	if userid, ok := database.UserIdForSecretKey(base64.StdEncoding.EncodeToString(hash)); ok {
+	hash := hashSecretKey(req.Key)
+	if userid, ok := database.UserIdForSecretKey(hash); ok {
 		if userid == -1 {
-			log.Fatalf("negativ 1 gotten for %s as hash %s", req.Key, base64.StdEncoding.EncodeToString(hash))
+			log.Fatalf("negativ 1 gotten for %s as hash %s", req.Key, hash)
 		}
 		token, err := createJWTToken(userid)
 		if err != nil {
