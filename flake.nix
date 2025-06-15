@@ -22,7 +22,7 @@
 			];
 
 			shellHook = ''
-				alias run="yarn run build && go run ."
+				alias run="yarn run build && go run . serve"
 				echo 'use "run" to build and launch the server'
 			'';
 		};

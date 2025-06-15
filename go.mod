@@ -1,4 +1,4 @@
-module pastebin
+module reactgobin
 
 go 1.24.2
 
