@@ -2,17 +2,12 @@ import React from "react";
 import getCookie from "../helper/cookies.ts"
 
 export default function Homepage() {
-	if (getCookie("authToken") != "") {
-		text = "This is my pastebin clone and you seem to have a token"
-	} else {
-		text = "This is my pastebin clone"
-	}
 	return (
 		<div>
 			<TopNav/>
 		<div className="flex flex-col justify-center items-center h-screen">
 			<h1 className="text-3x1 font-bold underline">
-				{text}
+				This is my pastebin clone
 			</h1>
 		</div>
 		</div>
@@ -20,6 +15,11 @@ export default function Homepage() {
 }
 
 function TopNav() {
+	if (getCookie("authToken") != "") {
+		loginname = "Logged-in"
+	} else {
+		text = "Login"
+	}
 	return (
 	<nav className="block w-full max-w-screen-lg px-4 py-2 mx-auto">
 		<div className="border-1 rounded-md">
@@ -30,7 +30,7 @@ function TopNav() {
 			</a>
 			<div className="items-center">
 				<ul className="flex flex-row gap-2">
-					<NavItem link="/login" name="Login" />
+					<NavItem link="/login" name={loginname} />
 					<NavItem link="/upload" name="Upload" />
 				</ul>
 			</div>

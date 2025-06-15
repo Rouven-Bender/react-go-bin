@@ -11,7 +11,7 @@ export default function Contentpage() {
 		.then(response => { return response.json() })
 		.then(json => {
 			if (json.type == 1) {
-				fetch("/userdata/"+json.id+".txt")
+				fetch("/userdata/"+json.id)
 				.then(response => {
 					return response.text()
 				})

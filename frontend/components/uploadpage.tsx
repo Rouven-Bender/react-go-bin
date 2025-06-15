@@ -5,9 +5,9 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 export default function Uploadpage() {
 	return (
 		<div className="flex justify-center items-center h-screen min-w-1/5 min-h-20">
-			<div className="min-w-1/5 min-h-20">
+			<div className="min-w-1/2 min-h-20">
 				<link rel="stylesheet" href="/cdn/react-tabs.css"/>
-				<Tabs className="min-w-1/5 min-h-20">
+				<Tabs className="min-w-1/2 min-h-20">
 					<TabList>
 						<Tab>file</Tab>
 						<Tab>link</Tab>
@@ -20,10 +20,42 @@ export default function Uploadpage() {
 						<LinkInput/>
 					</TabPanel>
 					<TabPanel>
-						<p className="pt-4">paste text</p>
+						<PasteBox/>
 					</TabPanel>
 				</Tabs>
 			</div>
+		</div>
+	)
+}
+
+function PasteBox() {
+	const [text, setText] = useState("");
+	const [uuid, setUUID] = useState(null);
+	const handleTextChange = (e : ChangeEvent<HTMLInputEvent>) => {
+		if (e.target.value != "") {
+			setText(e.target.value)
+		}
+	};
+	const uploadText = () => {
+		if (text == "") {
+			return
+		}
+		fetch("/api/upload", {
+			method: "POST",
+			body: text,
+			headers: {
+				'content-type': "text/plain",
+				'x-filename' : "pasted.txt"
+			}
+		})
+		.then(response => {return response.json()})
+		.then(json => {setUUID(json.uuid)})
+	};
+	return (
+		<div className="flex flex-col">
+			<textarea className="px-1 border-1" cols="80" rows="16" onChange={handleTextChange}/>
+			<button onClick={uploadText}>upload</button>
+			<Uuid uuid={uuid}/>
 		</div>
 	)
 }
@@ -109,7 +141,7 @@ function Fileupload() {
 		.then(json => {
 			setUUID(json.uuid)
 		})
-	}
+	};
 
 	return (
 	<div className="pt-4">
