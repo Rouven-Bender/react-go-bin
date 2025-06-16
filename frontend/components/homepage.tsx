@@ -40,13 +40,30 @@ export function AccountButton() {
 		deleteCookie("authToken")
 	};
 
+	const openModal = () => {
+		document.getElementById("account-modal").style.display = "flex"
+		document.getElementById("account-modal").showModal();
+	};
+	const closeModal = () => {
+		document.getElementById("account-modal").style.display = "none"
+		document.getElementById("account-modal").close();
+	};
+
 	if (getCookie("authToken") == "" || getCookie("authToken") == undefined) {
 		return (
 			<NavItem link="/login" name="login" />
 		)
 	}
 	return (
-		<NavItem link="/" onClick={logout} name="logout"/>
+		<li className="flex items-center p-1 text-sm gap-x-2">
+			<button className="flex items-center text-slate-600" onClick={openModal}>
+				Account
+			</button>
+			<dialog id="account-modal" className="flex flex-col hidden ml-auto mr-auto mt-auto mb-auto min-w-1/2 min-h-1/5">
+				<button id="account-modal-close-btn" className="ml-auto" onClick={closeModal}>X</button>
+				<a href="/" onClick={logout}>Logout</a>
+			</dialog>
+		</li>
 	)
 }
 
