@@ -5,7 +5,7 @@ import Homepage from "./components/homepage"
 import Contentpage from "./components/contentpage.tsx"
 import Login from "./components/login.tsx"
 import Uploadpage from "./components/uploadpage.tsx"
-import getCookie from "./helper/cookies.ts"
+import { getCookie } from "./helper/cookies.ts"
 
 function Application() {
 	const pathname = document.location.pathname

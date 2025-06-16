@@ -1,5 +1,5 @@
 import React from "react";
-import getCookie from "../helper/cookies.ts"
+import { getCookie, deleteCookie } from "../helper/cookies.ts"
 
 export default function Homepage() {
 	return (
@@ -14,12 +14,7 @@ export default function Homepage() {
 	)
 }
 
-function TopNav() {
-	if (getCookie("authToken") != "") {
-		loginname = "Logged-in"
-	} else {
-		text = "Login"
-	}
+export function TopNav() {
 	return (
 	<nav className="block w-full max-w-screen-lg px-4 py-2 mx-auto">
 		<div className="border-1 rounded-md">
@@ -30,7 +25,7 @@ function TopNav() {
 			</a>
 			<div className="items-center">
 				<ul className="flex flex-row gap-2">
-					<NavItem link="/login" name={loginname} />
+					<AccountButton/>
 					<NavItem link="/upload" name="Upload" />
 				</ul>
 			</div>
@@ -40,10 +35,34 @@ function TopNav() {
 	)
 }
 
-function NavItem({ link, name }) {
+export function AccountButton() {
+	const logout = () => {
+		deleteCookie("authToken")
+	};
+
+	if (getCookie("authToken") == "" || getCookie("authToken") == undefined) {
+		return (
+			<NavItem link="/login" name="login" />
+		)
+	}
+	return (
+		<NavItem link="/" onClick={logout} name="logout"/>
+	)
+}
+
+function NavItem({ link, name, onClick }) {
+	if (onClick == undefined) {
+	return (
+		<li className="flex items-center p-1 text-sm gap-x-2">
+			<a href={link} className="flex items-center text-slate-600">
+				{name}
+			</a>
+		</li>
+	)
+	}
 	return (
 	<li className="flex items-center p-1 text-sm gap-x-2">
-		<a href={link} className="flex items-center text-slate-600">
+		<a href={link} onClick={onClick} className="flex items-center text-slate-600">
 			{name}
 		</a>
 	</li>
