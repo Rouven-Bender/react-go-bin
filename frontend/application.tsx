@@ -5,6 +5,7 @@ import Homepage from "./components/homepage"
 import Contentpage from "./components/contentpage.tsx"
 import Login from "./components/login.tsx"
 import Uploadpage from "./components/uploadpage.tsx"
+import Accountpage from "./components/accountpage.tsx"
 import { getCookie } from "./helper/cookies.ts"
 
 function Application() {
@@ -22,6 +23,14 @@ function Application() {
 				break
 			} else {
 				return <Uploadpage/>
+			}
+		}
+		case "account": {
+			if (getCookie("authToken") == undefined) {
+				document.location = "/login?from=account"
+				break
+			} else {
+				return <Accountpage/>
 			}
 		}
 		default: {

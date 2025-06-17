@@ -61,8 +61,10 @@ func launchServer() {
 	mux.HandleFunc("GET /{uuid}", loadReact)
 	mux.HandleFunc("GET /login", loadReact)
 	mux.HandleFunc("GET /upload", loadReact)
+	mux.HandleFunc("GET /account", loadReact)
 
 	mux.HandleFunc("GET /api/lookup/{uuid}", lookupContent)
+	mux.HandleFunc("GET /api/account", lookupUserData)
 	mux.HandleFunc("POST /api/login", verifyCred)
 	mux.HandleFunc("POST /api/upload", requiresAuthToken(uploadHandler))
 
@@ -71,6 +73,26 @@ func launchServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func lookupUserData(w http.ResponseWriter, r *http.Request) {
+	id, err := getUserIDFromJWT(getToken(r))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	content, err := database.GetContentOfUserid(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	b, err := json.Marshal(content)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(b)
 }
 
 func lookupContent(w http.ResponseWriter, r *http.Request) {

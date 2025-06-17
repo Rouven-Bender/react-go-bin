@@ -60,14 +60,15 @@ export function AccountButton() {
 				Account
 			</button>
 			<dialog id="account-modal" className="flex flex-col hidden ml-auto mr-auto mt-auto mb-auto min-w-1/2 min-h-1/5">
-				<button id="account-modal-close-btn" className="ml-auto" onClick={closeModal}>X</button>
-				<a href="/" onClick={logout}>Logout</a>
+				<button id="account-modal-close-btn" className="ml-auto pr-2 pt-2" onClick={closeModal}>X</button>
+				<a href="/account" className="mx-auto">Me</a>
+				<a href="/" onClick={logout} className="mx-auto">Logout</a>
 			</dialog>
 		</li>
 	)
 }
 
-function NavItem({ link, name, onClick }) {
+export function NavItem({ link, name, onClick }) {
 	if (onClick == undefined) {
 	return (
 		<li className="flex items-center p-1 text-sm gap-x-2">

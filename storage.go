@@ -76,6 +76,28 @@ func (s *sqliteStore) CreateNewContent(c *content) error {
 	}
 }
 
+func (s *sqliteStore) GetContentOfUserid(id int) ([]content, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+	query := `select * from content where userid = ?`
+	rows, err := tx.Query(query, id)
+	if err != nil {
+		return nil, err
+	}
+	o := []content{}
+	for rows.Next() {
+		c, err := scanIntoContent(rows)
+		if err != nil {
+			return nil, err
+		}
+		o = append(o, *c)
+	}
+	return o, nil
+}
+
 func (s *sqliteStore) LookupContent(id string) (*content, error) {
 	tx, err := s.db.Begin()
 	if err != nil {

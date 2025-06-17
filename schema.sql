@@ -4,6 +4,7 @@ create table content (
 	data varchar(2048),
 	userid integer
 );
+create index idx_userid on content(userid);
 create table creds (
 	userid integer primary key,
 	key_hash char(44)
