@@ -64,7 +64,7 @@ func launchServer() {
 	mux.HandleFunc("GET /account", loadReact)
 
 	mux.HandleFunc("GET /api/lookup/{uuid}", lookupContent)
-	mux.HandleFunc("GET /api/account", lookupUserData)
+	mux.HandleFunc("GET /api/account", requiresAuthToken(lookupUserData))
 	mux.HandleFunc("POST /api/login", verifyCred)
 	mux.HandleFunc("POST /api/upload", requiresAuthToken(uploadHandler))
 
@@ -126,4 +126,11 @@ func generateUUID() string {
 	}
 	b = bytes.Trim(b, "\n")
 	return string(b)
+}
+
+func printOnRequest(f http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println("got request")
+		f(w, r)
+	}
 }
