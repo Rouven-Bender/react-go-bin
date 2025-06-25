@@ -1,9 +1,9 @@
 note.md
-./cdn/userdata/*
-./cdn/components/*
-./cdn/style.css
-./cdn/application.js
-./cdn/application.css
+/cdn/userdata/*
+/cdn/components/*
+/cdn/style.css
+/cdn/application.js
+/cdn/application.css
 node_modules/*
 *.sqlite
 leftof
